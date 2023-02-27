@@ -3,6 +3,14 @@ amazon-efs-utils-srpm
 
 Wrapper for SRPM building tools for amazon-efs-utils .
 
+Uses git repo from:
+
+* https://github.com/aws/efs-utils/
+
+Modified .spec file from:
+
+https://github.com/aws/efs-utils/blob/master/amazon-efs-utils.spec
+
 Building RPMs
 =============
 
@@ -31,4 +39,4 @@ Building locally
 
 * make build
 
-		Nico Kadel-Garcia <nkadel@gmail.com>
+Nico Kadel-Garcia <nkadel@gmail.com>
