@@ -129,7 +129,7 @@ fi
 %clean
 
 %changelog
-8 Mon Feb 27 2023 Nico Kadel-Garcia <nkadel@gmail.com> - 1.34.5-0.1
+* Mon Feb 27 2023 Nico Kadel-Garcia <nkadel@gmail.com> - 1.34.5-0.1
 - Provide consistent 'Source:'  entry
 - Use %%{pkgname}-%%{version} consistentcy with Source zip file from github
 
