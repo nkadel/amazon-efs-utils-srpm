@@ -12,11 +12,7 @@
 %global python_requires python3
 %endif
 
-%if 0%{?amzn1} || 0%{?rhel} == 6
-%global with_systemd 0
-%else
 %global with_systemd 1
-%endif
 
 %if 0%{?dist:1}
 %global platform %{dist}
@@ -26,12 +22,6 @@
 %else
 %global platform .unknown
 %endif
-%endif
-
-%if 0%{?amzn} > 2
-%global efs_bindir %{_sbindir}
-%else
-%global efs_bindir /sbin
 %endif
 
 %global pkgname efs-utils
@@ -68,7 +58,7 @@ Requires(preun)  : /sbin/service /sbin/chkconfig
 Requires(postun) : /sbin/service
 %endif
 
-Source:    https://github.com/aws/%{pkgname}-%{version}/archive/refs/tags/v%{version}.zip
+Source           : https://github.com/aws/%{pkgname}-%{version}/archive/refs/tags/v%{version}.zip
 
 %description
 This package provides utilities for simplifying the use of EFS file systems
@@ -77,25 +67,25 @@ This package provides utilities for simplifying the use of EFS file systems
 %setup -n %{pkgname}-%{version}
 
 %install
-mkdir -p %{buildroot}%{_sysconfdir}/amazon/efs
+%{__mkdir_p} %{buildroot}%{_sysconfdir}/amazon/efs
 %if %{with_systemd}
-mkdir -p %{buildroot}%{_unitdir}
-install -p -m 644 %{_builddir}/%{pkgname}-%{version}/dist/amazon-efs-mount-watchdog.service %{buildroot}%{_unitdir}
+%{__mkdir_p} %{buildroot}%{_unitdir}
+%{__install} -p -m 644 %{_builddir}/%{pkgname}-%{version}/dist/amazon-efs-mount-watchdog.service %{buildroot}%{_unitdir}
 %else
-mkdir -p %{buildroot}%{_sysconfdir}/init
-install -p -m 644 %{_builddir}/%{pkgname}-%{version}/dist/amazon-efs-mount-watchdog.conf %{buildroot}%{_sysconfdir}/init
+%{__mkdir_p} %{buildroot}%{_sysconfdir}/init
+%{__install} -p -m 644 %{_builddir}/%{pkgname}-%{version}/dist/amazon-efs-mount-watchdog.conf %{buildroot}%{_sysconfdir}/init
 %endif
 
-mkdir -p %{buildroot}%{efs_bindir}
-mkdir -p %{buildroot}%{_bindir}
-mkdir -p %{buildroot}%{_localstatedir}/log/amazon/efs
-mkdir -p  %{buildroot}%{_mandir}/man8
+%{__mkdir_p} %{buildroot}%{_sbindir}
+%{__mkdir_p} %{buildroot}%{_bindir}
+%{__mkdir_p} %{buildroot}%{_localstatedir}/log/amazon/efs
+%{__mkdir_p}  %{buildroot}%{_mandir}/man8
 
-install -p -m 644 %{_builddir}/%{pkgname}-%{version}/dist/efs-utils.conf %{buildroot}%{_sysconfdir}/amazon/efs
-install -p -m 444 %{_builddir}/%{pkgname}-%{version}/dist/efs-utils.crt %{buildroot}%{_sysconfdir}/amazon/efs
-install -p -m 755 %{_builddir}/%{pkgname}-%{version}/src/mount_efs/__init__.py %{buildroot}%{efs_bindir}/mount.efs
-install -p -m 755 %{_builddir}/%{pkgname}-%{version}/src/watchdog/__init__.py %{buildroot}%{_bindir}/amazon-efs-mount-watchdog
-install -p -m 644 %{_builddir}/%{pkgname}-%{version}/man/mount.efs.8 %{buildroot}%{_mandir}/man8
+%{__install} -p -m 644 %{_builddir}/%{pkgname}-%{version}/dist/efs-utils.conf %{buildroot}%{_sysconfdir}/amazon/efs
+%{__install} -p -m 444 %{_builddir}/%{pkgname}-%{version}/dist/efs-utils.crt %{buildroot}%{_sysconfdir}/amazon/efs
+%{__install} -p -m 755 %{_builddir}/%{pkgname}-%{version}/src/mount_efs/__init__.py %{buildroot}%{_sbindir}/mount.efs
+%{__install} -p -m 755 %{_builddir}/%{pkgname}-%{version}/src/watchdog/__init__.py %{buildroot}%{_bindir}/amazon-efs-mount-watchdog
+%{__install} -p -m 644 %{_builddir}/%{pkgname}-%{version}/man/mount.efs.8 %{buildroot}%{_mandir}/man8
 
 %files
 %defattr(-,root,root,-)
@@ -105,7 +95,7 @@ install -p -m 644 %{_builddir}/%{pkgname}-%{version}/man/mount.efs.8 %{buildroot
 %config(noreplace) %{_sysconfdir}/init/amazon-efs-mount-watchdog.conf
 %endif
 %{_sysconfdir}/amazon/efs/efs-utils.crt
-%{efs_bindir}/mount.efs
+%{_sbindir}/mount.efs
 %{_bindir}/amazon-efs-mount-watchdog
 /var/log/amazon
 %{_mandir}/man8/mount.efs.8.gz
@@ -139,6 +129,10 @@ fi
 %clean
 
 %changelog
+8 Mon Feb 27 2023 Nico Kadel-Garcia <nkadel@gmail.com> - 1.34.5-0.1
+- Provide consistent 'Source:'  entry
+- Use %%{pkgname}-%%{version} consistentcy with Source zip file from github
+
 * Sun Jan 1 2023 Ryan Stankiewicz <rjstank@amazon.com> - 1.34.5
 - Watchdog detect empty private key and regenerate
 - Update man page
